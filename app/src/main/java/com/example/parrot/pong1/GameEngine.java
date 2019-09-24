@@ -132,45 +132,42 @@ public class GameEngine extends SurfaceView implements Runnable {
     // ------------------------------
 
 
-    String directionBallIsMoving = "right";
+    String directionBallIsMoving = "down";
 
     // 1. Tell Android the (x,y) positions of your sprites
     public void updatePositions() {
         // @TODO: Update the position of the sprites
-        if (directionBallIsMoving.contentEquals("right")) {
-            this.ballXPosition = this.ballXPosition + 10;
 
-            if (this.ballXPosition > this.screenWidth) {
-                directionBallIsMoving = "left";
-            }
+        if (directionBallIsMoving == "down") {
+            this.ballYPosition = this.ballYPosition + 10;
 
-        }
-        else if (directionBallIsMoving.contentEquals("left")) {
-            this.ballXPosition = this.ballXPosition - 10;
-
-            // make ball bounce off left wall
-            // 1. detect when you reach the left wall
-            if (this.ballXPosition <= 0) {
-                // 2. change the direction of the ball
-                directionBallIsMoving = "right";
+            // if ball hits the floor, then change its direciton
+            if (this.ballYPosition >= this.screenHeight) {
+                Log.d(TAG, "BALL HIT THE FLOOR / OUT OF BOUNDS");
+                directionBallIsMoving = "up";
             }
         }
+        if (directionBallIsMoving == "up") {
+            this.ballYPosition = this.ballYPosition - 10;
 
-        // DEBUG - by outputing current positiong
-        Log.d(TAG, "XPos: " + this.ballXPosition);
+            // if ball hits ceiling, then change directions
+            if (this.ballYPosition <= 0 ) {
+                // hit upper wall
+                Log.d(TAG,"BALL HIT CEILING / OUT OF BOUNDS ");
+                directionBallIsMoving = "down";
+            }
+        }
+
+        Log.d(TAG, "YPos: " + this.ballYPosition);
 
 
 
-//        this.ballYPosition = this.ballYPosition - 10;
 
-//        // LEFT:
-//        this.ballXPosition = this.ballXPosition - 10;
-//        // RIGHT:
-//        this.ballXPosition = this.ballXPosition + 10;
-//        // DOWN:
-//        this.ballYPosition = this.ballYPosition + 10;
-//        // UP:
-//        this.ballYPosition = this.ballYPosition - 10;
+
+
+
+
+
 
 
         // @TODO: Collision detection code
@@ -199,6 +196,9 @@ public class GameEngine extends SurfaceView implements Runnable {
                     ballYPosition + 50,
                     paintbrush);
             // this.canvas.drawRect(left, top, right, bottom, paintbrush);
+
+            // draw the racket
+            this.canvas.drawRect(550, 1800, 950, 1750, paintbrush);
 
 
 
