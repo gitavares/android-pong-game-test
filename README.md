@@ -44,4 +44,3 @@ If you run the program, you will get a blank screen. Like this:
 
 ![Expected Output](screenshots/image.png)
 
-# android-pong-game-test

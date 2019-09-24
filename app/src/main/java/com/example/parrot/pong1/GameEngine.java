@@ -51,6 +51,9 @@ public class GameEngine extends SurfaceView implements Runnable {
     // ----------------------------
     // ## SPRITES
     // ----------------------------
+    int ballXPosition;      // keep track of ball -x
+    int ballYPosition;      // keep track of ball -y
+
 
     // ----------------------------
     // ## GAME STATS - number of lives, score, etc
@@ -74,6 +77,8 @@ public class GameEngine extends SurfaceView implements Runnable {
         // This is optional. Use it to:
         //  - setup or configure your sprites
         //  - set the initial position of your sprites
+        this.ballXPosition = this.screenWidth / 2;
+        this.ballYPosition = this.screenHeight / 2;
 
 
         // @TODO: Any other game setup stuff goes here
@@ -126,9 +131,47 @@ public class GameEngine extends SurfaceView implements Runnable {
     // - update, draw, setFPS
     // ------------------------------
 
+
+    String directionBallIsMoving = "right";
+
     // 1. Tell Android the (x,y) positions of your sprites
     public void updatePositions() {
         // @TODO: Update the position of the sprites
+        if (directionBallIsMoving.contentEquals("right")) {
+            this.ballXPosition = this.ballXPosition + 10;
+
+            if (this.ballXPosition > this.screenWidth) {
+                directionBallIsMoving = "left";
+            }
+
+        }
+        else if (directionBallIsMoving.contentEquals("left")) {
+            this.ballXPosition = this.ballXPosition - 10;
+
+            // make ball bounce off left wall
+            // 1. detect when you reach the left wall
+            if (this.ballXPosition <= 0) {
+                // 2. change the direction of the ball
+                directionBallIsMoving = "right";
+            }
+        }
+
+        // DEBUG - by outputing current positiong
+        Log.d(TAG, "XPos: " + this.ballXPosition);
+
+
+
+//        this.ballYPosition = this.ballYPosition - 10;
+
+//        // LEFT:
+//        this.ballXPosition = this.ballXPosition - 10;
+//        // RIGHT:
+//        this.ballXPosition = this.ballXPosition + 10;
+//        // DOWN:
+//        this.ballYPosition = this.ballYPosition + 10;
+//        // UP:
+//        this.ballYPosition = this.ballYPosition - 10;
+
 
         // @TODO: Collision detection code
 
@@ -146,8 +189,18 @@ public class GameEngine extends SurfaceView implements Runnable {
             this.canvas.drawColor(Color.argb(255,0,0,255));
             paintbrush.setColor(Color.WHITE);
 
-
             //@TODO: Draw the sprites (rectangle, circle, etc)
+
+            // 1. Draw the ball
+            this.canvas.drawRect(
+                    ballXPosition,
+                    ballYPosition,
+                    ballXPosition + 50,
+                    ballYPosition + 50,
+                    paintbrush);
+            // this.canvas.drawRect(left, top, right, bottom, paintbrush);
+
+
 
             //@TODO: Draw game statistics (lives, score, etc)
             paintbrush.setTextSize(60);
