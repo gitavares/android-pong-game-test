@@ -63,7 +63,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     // ----------------------------
     // ## GAME STATS - number of lives, score, etc
     // ----------------------------
-    int score = 0;
+    int score;
+    int lives;
 
 
     public GameEngine(Context context, int w, int h) {
@@ -99,8 +100,6 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         this.racketWidth = 400;
         this.racketHeight = 50;
-
-        this.score = 0;
     }
 
 
@@ -133,6 +132,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     }
 
     public void startGame() {
+        this.score = 0;
+        this.lives = 3;
         gameIsRunning = true;
         gameThread = new Thread(this);
         gameThread.start();
@@ -150,6 +151,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     String personTapped = "right";
 
     // 1. Tell Android the (x,y) positions of your sprites
+    // refactor
+    // detected better the racket and ball position
     public void updatePositions() {
         // @TODO: Update the position of the sprites
 
@@ -158,9 +161,17 @@ public class GameEngine extends SurfaceView implements Runnable {
 
             changeBallXDirection();
 
-            if (this.ballYPosition > this.racketYPosition + racketHeight) {
+            if (ballYPosition == (racketYPosition + racketHeight) + 1) {
                 Log.d(TAG, "BALL PASSED THE RACKET / OUT OF BOUNDS");
-                this.gameOver();
+                Log.d(TAG, "Life: " + this.lives);
+                Log.d(TAG, "ballYPosition: " + ballYPosition);
+                Log.d(TAG, "racketYPosition + racketHeight: " + (racketYPosition + racketHeight + 1));
+                if(this.lives > 1){
+                    this.lives -= 1;
+                    this.initialValues();
+                } else {
+                    this.gameOver();
+                }
             }
         }
         if (directionYBallIsMoving == "up") {
@@ -258,24 +269,20 @@ public class GameEngine extends SurfaceView implements Runnable {
                     ballXPosition + ballWidth,
                     ballYPosition + ballHeight,
                     paintbrush);
-            // this.canvas.drawRect(left, top, right, bottom, paintbrush);
 
             // draw the racket
-//            this.canvas.drawRect(550, 1800, 950, 1750, paintbrush);
-//            paintbrush.setColor(Color.YELLOW);
             this.canvas.drawRect(
                     racketXPosition,
                     racketYPosition,
                     racketXPosition + racketWidth,
                     racketYPosition + racketHeight,
                     paintbrush);
-//            paintbrush.setColor(Color.WHITE);
-
 
 
             //@TODO: Draw game statistics (lives, score, etc)
             paintbrush.setTextSize(60);
             canvas.drawText("Score: " + this.score, 20, 100, paintbrush);
+            canvas.drawText("Life: " + this.lives, 20, 160, paintbrush);
 
             //----------------
             this.holder.unlockCanvasAndPost(canvas);
@@ -309,10 +316,8 @@ public class GameEngine extends SurfaceView implements Runnable {
         int userAction = event.getActionMasked();
         //@TODO: What should happen when person touches the screen?
         if (userAction == MotionEvent.ACTION_DOWN) {
-
             if(gameIsRunning){
                 float fingerXposition = event.getX();
-//                float fingerYposition = event.getY();
 
                 float middleScreen = this.screenWidth / 2;
 
@@ -324,7 +329,6 @@ public class GameEngine extends SurfaceView implements Runnable {
             } else {
                 startGame();
             }
-
         }
         else if (userAction == MotionEvent.ACTION_UP) {
             // user lifted their finger
@@ -350,6 +354,11 @@ public class GameEngine extends SurfaceView implements Runnable {
 
             this.initialValues();
             this.pauseGame();
+
         }
     }
 }
+
+
+
+// intersect() ---> search for it. collision detect
